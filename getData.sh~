@@ -1,0 +1,19 @@
+#!/bin/bash
+# echo "Hello, std from getData.sh."
+
+#n=$SLURM_ARRAY_TASK_ID
+#n=$SLURM_ARRAY_TASK_ID
+n=9
+if [ "$n" -lt 10 ]; then
+    echo "$n is less than 10"
+    LINK="http://pages.stat.wisc.edu/~jgillett/479/HPC/airlines/0$n.csv.bz2"
+    echo ${LINK}
+    wget ${LINK}
+else
+    echo "$n is greater than or equal to 10"
+    LINK="http://pages.stat.wisc.edu/~jgillett/479/HPC/airlines/$n.csv.bz2"
+    echo ${LINK}
+    wget ${LINK}
+fi
+#wget http://pages.stat.wisc.edu/~jgillett/479/HPC/airlines/$n.csv.bz2
+#bzip2 -d $n.csv.bz2
