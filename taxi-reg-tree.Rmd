@@ -1,0 +1,105 @@
+---
+title: "taxi-regression-tree"
+author: "Binrui Yang"
+date: "4/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(tree)
+```
+
+```{r}
+d = read_csv('small.csv')
+
+```
+```{r}
+head(d)
+```
+
+Pickup_datatime (convert to "Morning", "Afternoon", "Evening" in bash), passenger_count, trip_distance, payment_type, tip_amount
+
+```{r}
+df = d %>% 
+  mutate(total_time = difftime(Trip_Dropoff_DateTime, Trip_Pickup_DateTime, units = "mins")) %>% 
+  separate(Trip_Pickup_DateTime, into = c("Date", "Time"), sep = " ") %>% 
+  mutate(Hour =  as.numeric(gsub("\\:.*$", "", Time))) %>% 
+  mutate(Part_of_Date = case_when(Hour >= 5 & Hour<=11 ~ "morning",
+                                  Hour >= 12 & Hour<=16 ~ "afternoon",
+                                  Hour >= 16 & Hour<=24 ~ "evening",
+                                  Hour >= 0 & Hour <=4 ~ "midnight")) %>% 
+  select(-c(Date, Time, Hour, Trip_Dropoff_DateTime)) %>% 
+  mutate(Part_of_Date = as.factor(Part_of_Date)) %>% 
+  mutate(total_time = as.numeric(total_time))
+
+```
+
+
+
+```{r}
+df = d %>%
+  select(c(Trip_Pickup_DateTime, Trip_Distance, Passenger_Count,Tip_Amt,Total_Amt, Trip_Dropoff_DateTime)) %>%
+  mutate(total_time = difftime(Trip_Dropoff_DateTime, Trip_Pickup_DateTime, units = "mins")) %>%
+  separate(Trip_Pickup_DateTime, into = c("Date", "Time"), sep = " ") %>%
+  mutate(Hour =  as.numeric(gsub("\\:.*$", "", Time))) %>%
+  mutate(Part_of_Date = case_when(Hour >= 5 & Hour<=11 ~ "morning",
+                                  Hour >= 12 & Hour<=16 ~ "afternoon",
+                                  Hour >= 16 & Hour<=24 ~ "evening",
+                                  Hour >= 0 & Hour <=4 ~ "midnight")) %>%
+  select(-c(Date, Time, Hour, Trip_Dropoff_DateTime)) %>%
+  mutate(Part_of_Date = as.factor(Part_of_Date)) %>%
+  mutate(total_time = as.numeric(total_time))
+
+```
+
+```{r}
+df = na.omit(df)
+df
+# id <- sample(1:nrow(df),round(nrow(df)*0.8))
+# train <- df[id,]
+# test <- df[-id,]
+```
+
+```{r}
+#set.seed(1)
+library(tree)
+```
+
+```{r}
+tree1 = tree(Total_Amt ~., data = df)
+```
+
+```{r}
+summary(tree1)
+```
+
+```{r}
+plot(tree1)
+text(tree1, pretty = 0, cex = 0.8)
+```
+
+```{r}
+# library(ISLR)
+# set.seed(123)
+# tree.cv = cv.tree(tree1)
+# plot(tree.cv$size,tree.cv$dev,type="b",xlab="Tree Size",ylab="RSS")
+```
+
+```{r}
+png("tree.png", width = 600, height = 600)
+# 2. Create the plot
+plot(tree1)
+text(tree1, pretty = 0, cex = 0.8)
+# 3. Close the file
+dev.off()
+```
+
+```{r}
+# difftime(d$Trip_Dropoff_DateTime, d$Trip_Pickup_DateTime, units = "mins")
+```
+
