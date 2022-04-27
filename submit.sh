@@ -35,3 +35,31 @@ jobId5=$(sbatch --array=1-12 \
 		--dependency=afterany:$jobId4 \
                 get12Data.sh)
 jobId5=$(echo $jobId5 | sed 's/Submitted batch job //')
+
+echo "6"
+jobId6=$(sbatch --array=1-4 \
+		--output="slurm_out/slurm-%A_%a.out" \
+		--dependency=afterany:$jobId5 \
+                getQ1.sh)
+jobId6=$(echo $jobId6 | sed 's/Submitted batch job //')
+
+echo "7"
+jobId7=$(sbatch --array=1-4 \
+		--output="slurm_out/slurm-%A_%a.out" \
+		--dependency=afterany:$jobId6 \
+                getQ2.sh)
+jobId7=$(echo $jobId7 | sed 's/Submitted batch job //')
+
+echo "8"
+jobId8=$(sbatch --array=1-4 \
+		--output="slurm_out/slurm-%A_%a.out" \
+		--dependency=afterany:$jobId7 \
+                getQ3.sh)
+jobId8=$(echo $jobId8 | sed 's/Submitted batch job //')
+
+echo "9"
+jobId9=$(sbatch --array=1-4 \
+		--output="slurm_out/slurm-%A_%a.out" \
+		--dependency=afterany:$jobId8 \
+                getQ4.sh)
+jobId9=$(echo $jobId9 | sed 's/Submitted batch job //')
