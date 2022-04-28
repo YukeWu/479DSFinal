@@ -4,7 +4,7 @@ find . -type f -name 'headers.csv' -delete
 
 n=$(($SLURM_ARRAY_TASK_ID+2008))
 # n=2009
-head -1 yellow_tripdata_2009-01.csv | cut -d, -f2,4,5,12,16,18 > headers.csv
+head -1 yellow_tripdata_2009-01.csv | cut -d, -f2,3,4,5,12,16,18 > headers.csv
 cat headers.csv > mergedQ4_$n.csv
 
 if [ $n -eq 2010 ]
