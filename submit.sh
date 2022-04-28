@@ -63,3 +63,13 @@ jobId9=$(sbatch --array=1-4 \
 		--dependency=afterany:$jobId8 \
                 getQ4.sh)
 jobId9=$(echo $jobId9 | sed 's/Submitted batch job //')
+
+echo "build tree"
+jobId10=$(sbatch --array=2009-2012 \
+                --mem=15G \
+	        --output="slurm_out/slurm-%A_%a.out" \
+                --error="slurm_out/slurm-%A_%a.err" \
+		--dependency=afterok:$jobId9 \
+		tree.sh)
+
+jobId10=$(echo $jobId10 | sed 's/Submitted batch job //')
